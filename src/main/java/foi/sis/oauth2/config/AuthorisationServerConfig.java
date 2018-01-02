@@ -1,5 +1,6 @@
 package foi.sis.oauth2.config;
 
+import foi.sis.oauth2.service.SisClientDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 public class AuthorisationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     private final AuthenticationManager authenticationManager;
+    private final SisClientDetailService clientDetailsService;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -23,13 +25,7 @@ public class AuthorisationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory().withClient("my-client")
-                .authorizedGrantTypes("client_credentails", "password")
-                .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
-                .scopes("read", "write", "truest")
-                .resourceIds("oauth2-resource")
-                .accessTokenValiditySeconds(5000)
-                .secret("secret");
+        clients.withClientDetails(clientDetailsService);
     }
 
     @Override
